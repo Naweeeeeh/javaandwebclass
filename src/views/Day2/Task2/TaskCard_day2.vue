@@ -201,7 +201,7 @@ function cancelEdit() {
   border-radius: var(--radius-pill);
 }
 .priority-low {
-  background: var(--info-soft);
+  background: var(--warn-soft);
   color: var(--info);
 }
 .priority-medium {
@@ -209,7 +209,7 @@ function cancelEdit() {
   color: var(--info);
 }
 .priority-high {
-  background: var(--danger-soft);
+  background: var(--warn-soft);
   color: var(--info);
 }
 .task-actions {
