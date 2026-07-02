@@ -1,17 +1,9 @@
 <script setup>
-import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useTaskStore } from '@/views/Day4/Task4/taskStore.js'
 
-const taskStore = {
-  tasks: [
-    { id: 1, name: 'Write Playwright tests', done: false, dueDate: '06/30/2026' },
-    { id: 2, name: 'Add documentation', done: false, dueDate: '07/01/2026' },
-    { id: 3, name: 'Say hello world', done: true, dueDate: '06/29/2026' },
-  ],
-}
-
-const total = computed(() => taskStore.tasks.length)
-const done = computed(() => taskStore.tasks.filter((t) => t.done).length)
-const pending = computed(() => total.value - done.value)
+const taskStore = useTaskStore()
+const { totalCount: total, doneCount: done, pendingCount: pending } = storeToRefs(taskStore)
 </script>
 
 <template>

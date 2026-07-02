@@ -149,7 +149,7 @@ function cancelEdit() {
 .task-card:hover {
   border-color: var(--border-strong);
   box-shadow: var(--shadow-sm);
-  background: var(--surface);
+  background: var(--surface-hover);
 }
 .task-card.completed {
   background: var(--accent-soft);
@@ -247,8 +247,8 @@ function cancelEdit() {
   transition: all 0.18s;
 }
 .btn-delete:hover {
-  background: var(--danger-soft);
-  color: var(--danger);
-  border-color: var(--danger);
+  background: var(--surface-hover);
+  color: var(--text-heading);
+  border-color: var(--border-strong);
 }
 </style>

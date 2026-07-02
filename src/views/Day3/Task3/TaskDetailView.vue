@@ -7,22 +7,17 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useTaskStore } from '@/views/Day4/Task4/taskStore.js'
 
 // TODO 1: Get the current route and router instances
 const route  = useRoute()
 const router = useRouter()
 
-const taskStore = {
-  tasks: [
-    { id: 1, name: 'Write Playwright tests', done: false, dueDate: '06/30/2026' },
-    { id: 2, name: 'Add documentation', done: false, dueDate: '07/01/2026' },
-    { id: 3, name: 'Say hello world', done: true, dueDate: '06/29/2026' },
-  ],
-}
+const taskStore = useTaskStore()
 
 // TODO 2: Find the task matching the route param
 // Remember: route.params.id is a STRING — cast to Number before comparing
-const task = computed(() => taskStore.tasks.find(t => t.id === Number(route.params.id)))
+const task = computed(() => taskStore.getTaskById(route.params.id))
 
 // TODO 3: Write goBack() using router.push() to navigate to '/home'
 function goBack() {

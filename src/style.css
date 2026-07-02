@@ -6,7 +6,7 @@
   --bg: #ece9e1;            /* warm off-white paper */
   --surface: #ffffff;       /* cards / panels */
   --surface-2: #f7f5ef;     /* subtle raised areas */
-  --surface-hover: #f0ede4;
+  --surface-hover: #e8dcc0;
 
   --border: #e4e0d5;        /* hairline borders */
   --border-strong: #d5d0c1;
@@ -33,6 +33,7 @@
   --day1: #f5ce3e;          /* reactivity */
   --day2: #2f6be4;          /* components */
   --day3: #2e9e5b;          /* routing */
+  --day4: #8b5cf6;          /* state */
 
   /* ── Shape & depth ──────────────────────────────────── */
   --radius-sm: 8px;

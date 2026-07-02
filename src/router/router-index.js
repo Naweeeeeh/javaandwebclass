@@ -61,10 +61,10 @@ import HomeView       from '@/views/Day3/Task3/HomeView_day3.vue'
 import TaskDetailView from '@/views/Day3/Task3/TaskDetailView.vue'
 import StatsView from '@/views/Day3/Task3/StatsView.vue'
 import AboutView from '@/views/Day3/Task3/AboutView.vue'
+import TaskStoreView from '@/views/Day4/Task4/TaskListView.vue'
 
 // TODO 2: Import your Pinia task store so the guard can check if a task exists
-// import { useTaskStore } from '@/stores/taskStore'
-const validTaskIds = [1, 2, 3]
+import { useTaskStore } from '@/views/Day4/Task4/taskStore.js'
 
 const routes = [
   // TODO 3: Add a redirect from '/' to '/home'
@@ -84,6 +84,7 @@ const routes = [
   { path: '/about', component: AboutView },
 
   { path: '/stats', component: StatsView },
+  { path: '/day4', component: TaskStoreView },
 ]
 
 const router = createRouter({
@@ -98,7 +99,8 @@ const router = createRouter({
 // - If NOT found: next({ path: '/home', query: { error: 'notfound' } })
 // - If found (or not a protected route): next()
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresTask && !validTaskIds.includes(Number(to.params.id))) {
+  const taskStore = useTaskStore()
+  if (to.meta.requiresTask && !taskStore.getTaskById(to.params.id)) {
     next({ path: '/day3', query: { error: 'notfound' } })
   } else {
     next()

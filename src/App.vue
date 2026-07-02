@@ -7,6 +7,7 @@ const days = [
   { id: 1, label: 'Reactivity', topic: 'ref · computed · v-model', accent: 'var(--day1)', to: '/day1', roots: ['/day1'] },
   { id: 2, label: 'Components', topic: 'props · emits · slots',     accent: 'var(--day2)', to: '/day2', roots: ['/day2'] },
   { id: 3, label: 'Routing',    topic: 'routes · guards · links',   accent: 'var(--day3)', to: '/day3', roots: ['/day3', '/task', '/about', '/stats'] },
+  { id: 4, label: 'State',      topic: 'pinia · store · getters',   accent: 'var(--day4)', to: '/day4', roots: ['/day4'] },
 ]
 
 // A day is active when the current URL sits under one of its route roots.
@@ -92,7 +93,7 @@ function isActive(day) {
 /* ── Day slider ── */
 .slider {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
 .slide {

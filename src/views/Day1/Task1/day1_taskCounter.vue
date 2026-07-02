@@ -60,12 +60,15 @@ FILE STRUCTURE (this is a single-file component)
 
 <script setup>
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useTaskStore } from '@/views/Day4/Task4/taskStore.js'
 
 // TODO 1: Create a ref for the text input value (initial value: '')
 const newTaskName = ref('')
 
 // TODO 2: Create a ref for the tasks array (initial value: [])
-const tasks = ref([])
+const taskStore = useTaskStore()
+const { tasks } = storeToRefs(taskStore)
 
 // TODO 3: Create computed() values for total, done, and pending counts
 const totalCount   = computed(() => tasks.value.length)
@@ -88,32 +91,31 @@ const filteredTasks = computed(() => {
 // - Clear the input
 function addTask() {
   const name = newTaskName.value.trim()
-  if (!name) return                                  
-  tasks.value.push({ id: Date.now(), name, done: false })
-  newTaskName.value = ''                            
+  if (!name) return
+  taskStore.addTask(name)
+  newTaskName.value = ''
 }
 
 // TODO 5: Write toggleTask(id) — flip task.done for the matching task
 function toggleTask(id) {
-  const task = tasks.value.find(t => t.id === id)
-  if (task) task.done = !task.done
+  taskStore.toggleTask(id)
 }
 
 // TODO 6: Write removeTask(id) — filter out the task with this id
 function removeTask(id) {
-  tasks.value = tasks.value.filter(t => t.id !== id)
+  taskStore.removeTask(id)
   console.log("Removed: " + id)
   console.log(totalCount.value + " left")
 }
 
 // clear all tasks
 function clearAll() {
-  tasks.value = []
+  taskStore.tasks = []
 }
 
 // clear the selected (checked) tasks
 function clearSelected() {
-  tasks.value = tasks.value.filter(t => !t.done)
+  taskStore.clearCompleted()
 }
 </script>
 
@@ -316,7 +318,7 @@ h1 {
 
 .task-list li:hover {
   border-color: var(--border-strong);
-  background: var(--surface);
+  background: var(--surface-hover);
 }
 
 .task-list .name {
@@ -377,8 +379,8 @@ h1 {
 }
 
 .btn-remove:hover {
-  background: var(--danger-soft);
-  color: var(--danger);
+  background: var(--surface-hover);
+  color: var(--text-heading);
 }
 
 /* ── footer actions ── */
@@ -402,8 +404,8 @@ h1 {
 }
 
 .actions button:hover {
-  border-color: var(--danger);
-  color: var(--danger);
-  background: var(--danger-soft);
+  border-color: var(--border-strong);
+  color: var(--text-heading);
+  background: var(--surface-hover);
 }
 </style>

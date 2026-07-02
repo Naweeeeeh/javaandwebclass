@@ -6,35 +6,28 @@
 -->
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useTaskStore } from '@/views/Day4/Task4/taskStore.js'
 import TaskCard from './TaskCard_day2.vue'
 
 // TODO 1: Create a ref() tasks array with at least 3 sample tasks
 // Each task: { id, name, done, dueDate }
 // const tasks = ref([...])
-const tasks = ref([
-    {id: 1, name:'Playwright tests later', done: false, dueDate:"06/30/2026", priority:"high"},
-    {id: 2, name:'add documentations later', done: false, dueDate:"07/01/20226", priority : "medium"},
-    {id: 3, name:'hlelo world', done: true, dueDate:"06/29/2026"},
-])
+const taskStore = useTaskStore()
+const { tasks } = storeToRefs(taskStore)
 
 // TODO 2: Write handleComplete(id) — toggle the done state of the task with this id
 function handleComplete(id) {
-  // your code here
-  const task = tasks.value.find(t => t.id === id)
-  if (task) task.done = !task.done
-  console.log("Completed", tasks.value)
+  taskStore.toggleTask(id)
 }
 
 // TODO 3: Write handleDelete(id) — remove the task with this id from the array
 function handleDelete(id) {
-  // your code here
-  tasks.value = tasks.value.filter(t => t.id !== id)
-  console.log("Deleted", tasks.value)
+  taskStore.removeTask(id)
 }
 
-function handleUpdate({ id, name }) {
-  const task = tasks.value.find(t => t.id === id)
-  if (task) task.name = name
+function handleUpdate(payload) {
+  taskStore.updateTask(payload)
 }
 
 const isEmpty = computed(() => tasks.value.length === 0)
@@ -50,7 +43,7 @@ watch(allDone, (done) => {
 
 // Delete every task at once.
 function clearAll() {
-  tasks.value = []
+  taskStore.tasks = []
 }
 </script>
 
@@ -151,18 +144,20 @@ h1 {
 
 .btn-danger {
   padding: 9px 18px;
-  background: var(--danger);
-  color: #fff;
-  border: none;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  transition: filter 0.18s;
+  transition: all 0.18s;
 }
 
 .btn-danger:hover {
-  filter: brightness(0.94);
+  border-color: var(--text-muted);
+  background: var(--surface-hover);
+  color: var(--text-heading);
 }
 
 .btn-ghost {

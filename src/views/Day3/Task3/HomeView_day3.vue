@@ -6,17 +6,14 @@
 -->
 <script setup>
 import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+import { useTaskStore } from '@/views/Day4/Task4/taskStore.js'
 
-const taskStore = {
-  tasks: [
-    { id: 1, name: 'Write Playwright tests', done: false, dueDate: '06/30/2026' },
-    { id: 2, name: 'Add documentation', done: false, dueDate: '07/01/2026' },
-    { id: 3, name: 'hello world', done: true, dueDate: '06/29/2026' },
-  ],
-}
+const taskStore = useTaskStore()
+const { tasks } = storeToRefs(taskStore)
+
 const route = useRoute()
-const router = useRouter()
 
 // TODO 1: Read route.query.error — if it equals 'notfound', show a warning banner
 const showErrorBanner = computed(() => route.query.error === 'notfound')
@@ -39,8 +36,9 @@ const showErrorBanner = computed(() => route.query.error === 'notfound')
 
     <!-- TODO 4: Render each task as a RouterLink to /task/:id -->
     <!-- Use <RouterLink :to="`/task/${task.id}`"> as the wrapper -->
-    <ul class="task-list">
-      <li v-for="task in taskStore.tasks" :key="task.id">
+    <p v-if="tasks.length === 0" class="empty">No tasks yet — the list is empty.</p>
+    <ul v-else class="task-list">
+      <li v-for="task in tasks" :key="task.id">
         <!-- TODO 5: Wrap this in a RouterLink -->
          <RouterLink :to="`/task/${task.id}`">
         <span :class="{ done: task.done }">{{ task.name }}</span>
@@ -103,6 +101,12 @@ h1 {
   border-color: var(--text-heading);
   color: #fff;
 }
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 40px 0;
+}
 .task-list {
   list-style: none;
   padding: 0;
@@ -126,7 +130,7 @@ h1 {
 }
 .task-list a:hover {
   border-color: var(--border-strong);
-  background: var(--surface);
+  background: var(--surface-hover);
 }
 .task-list a:focus-visible {
   outline: none;
