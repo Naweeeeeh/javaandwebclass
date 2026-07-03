@@ -124,4 +124,7 @@ export const useTaskStore = defineStore('tasks', () => {
     updateTask,
     clearCompleted,
   }
+}, {
+  // Persist tasks to localStorage so they survive a page reload.
+  persist: true,
 })

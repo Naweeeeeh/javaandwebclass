@@ -1,13 +1,26 @@
 <script setup>
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useUserStore } from '@/views/Day4/Task4/userStore.js'
 
 const route = useRoute()
+
+const userStore = useUserStore()
+const { currentUser, isLoggedIn } = storeToRefs(userStore)
+const loginName = ref('')
+
+function handleLogin() {
+  userStore.login(loginName.value)
+  loginName.value = ''
+}
 
 const days = [
   { id: 1, label: 'Reactivity', topic: 'ref · computed · v-model', accent: 'var(--day1)', to: '/day1', roots: ['/day1'] },
   { id: 2, label: 'Components', topic: 'props · emits · slots',     accent: 'var(--day2)', to: '/day2', roots: ['/day2'] },
   { id: 3, label: 'Routing',    topic: 'routes · guards · links',   accent: 'var(--day3)', to: '/day3', roots: ['/day3', '/task', '/about', '/stats'] },
   { id: 4, label: 'State',      topic: 'pinia · store · getters',   accent: 'var(--day4)', to: '/day4', roots: ['/day4'] },
+  { id: 5, label: 'API',        topic: 'fetch · async · loading',   accent: 'var(--day5)', to: '/day5', roots: ['/day5', '/users'] },
 ]
 
 // A day is active when the current URL sits under one of its route roots.
@@ -20,6 +33,22 @@ function isActive(day) {
   <div class="shell">
     <header class="masthead">
       <div class="brand-meta">BOISER · Vue 3 training</div>
+
+      <div class="user-area">
+        <template v-if="isLoggedIn">
+          <span class="user-greeting">Hi, {{ currentUser }}</span>
+          <button class="user-btn" @click="userStore.logout">Log out</button>
+        </template>
+        <template v-else>
+          <input
+            v-model="loginName"
+            class="user-input"
+            placeholder="Your name"
+            @keyup.enter="handleLogin"
+          />
+          <button class="user-btn" @click="handleLogin">Log in</button>
+        </template>
+      </div>
     </header>
 
     <section class="hero">
@@ -63,7 +92,7 @@ function isActive(day) {
 
 .masthead {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 20px;
@@ -75,6 +104,55 @@ function isActive(day) {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-muted);
+}
+
+/* ── Current user / login ── */
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.user-greeting {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-heading);
+}
+.user-input {
+  padding: 7px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-heading);
+  font-size: 13px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+.user-input::placeholder {
+  color: var(--text-muted);
+}
+.user-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--ring);
+}
+.user-btn {
+  padding: 7px 14px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: border-color 0.18s, background 0.18s, color 0.18s;
+}
+.user-btn:hover {
+  border-color: var(--text-muted);
+  background: var(--surface-hover);
+  color: var(--text-heading);
+}
+.user-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
 .hero {
