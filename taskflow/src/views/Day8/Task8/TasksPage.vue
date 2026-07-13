@@ -32,7 +32,7 @@
 
       <div v-if="visibleTasks.length === 0" class="empty">
         <ion-icon :icon="checkmarkDoneOutline" />
-        <p v-if="tasks.length === 0">Empty tasks</p>
+        <p v-if="tasks.length === 0">No tasks yet — tap + to add your first one.</p>
         <p v-else>No {{ filter }} tasks.</p>
       </div>
 
@@ -45,6 +45,9 @@
               @click.stop
               @ionChange="toggleTask(task.id)"
             />
+            <ion-thumbnail v-if="task.photo" slot="start" class="thumb">
+              <ion-img :src="task.photo" />
+            </ion-thumbnail>
             <ion-label :class="{ done: task.done }">
               {{ task.name }}
             </ion-label>
@@ -77,7 +80,7 @@
       <ion-header>
         <ion-toolbar>
           <ion-buttons slot="start">
-            <ion-button @click="cancelAddModal">Cancel</ion-button>
+            <ion-button @click="closeAddModal">Cancel</ion-button>
           </ion-buttons>
           <ion-title>New Task</ion-title>
           <ion-buttons slot="end">
@@ -88,7 +91,7 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-content class="ion-padding">
+      <ion-content class="ion-padding" @click="onFlowClick">
         <ion-list inset>
           <ion-item>
             <ion-input
@@ -125,6 +128,39 @@
             </ion-segment-button>
           </ion-segment>
         </div>
+
+        <div class="field">
+          <p class="field-label">Photo</p>
+          <ion-button expand="block" fill="outline" @click="openPhotoChooser">
+            <ion-icon slot="start" :icon="cameraOutline" />
+            {{ form.photo ? 'Replace photo' : 'Add photo' }}
+          </ion-button>
+          <ion-img v-if="form.photo" :src="form.photo" class="preview" />
+        </div>
+      </ion-content>
+    </ion-modal>
+
+    <ion-modal
+      :is-open="photoChooserOpen"
+      :initial-breakpoint="0.4"
+      :breakpoints="[0, 0.4]"
+      @didDismiss="photoChooserOpen = false"
+    >
+      <ion-content class="ion-padding" @click="onFlowClick">
+        <h2 class="chooser-title">Add a photo</h2>
+        <div class="chooser-actions">
+          <ion-button expand="block" class="btn-pay" @click="pickFrom('camera')">
+            <ion-icon slot="start" :icon="cameraOutline" />
+            Take Photo
+          </ion-button>
+          <ion-button expand="block" class="btn-ghost" @click="pickFrom('photos')">
+            <ion-icon slot="start" :icon="imagesOutline" />
+            Choose from Photos
+          </ion-button>
+          <ion-button expand="block" fill="clear" color="medium" @click="photoChooserOpen = false">
+            Cancel
+          </ion-button>
+        </div>
       </ion-content>
     </ion-modal>
 
@@ -134,11 +170,11 @@
           <ion-buttons slot="start">
             <ion-button :disabled="processing" @click="closePay">Cancel</ion-button>
           </ion-buttons>
-          <ion-title>PayPal</ion-title>
+          <ion-title>Checkout</ion-title>
         </ion-toolbar>
       </ion-header>
 
-      <ion-content class="ion-padding pp-content">
+      <ion-content class="ion-padding pp-content" @click="onFlowClick">
         <div v-if="isPayPalStep" class="pp-logo">
           <span class="pp-pay">Pay</span><span class="pp-pal">Pal</span>
         </div>
@@ -148,6 +184,14 @@
             <div class="receipt-row">
               <span>{{ priorityLabel }} priority task — "{{ form.name || 'Untitled' }}"</span>
               <span>{{ money(subtotal) }}</span>
+            </div>
+            <div v-if="form.photo" class="receipt-row muted">
+              <span>Photo add-on</span>
+              <span>{{ money(photoFee) }}</span>
+            </div>
+            <div v-if="clickCharge > 0" class="receipt-row muted">
+              <span>Button clicks ({{ clickCount }}× ₱2)</span>
+              <span>{{ money(clickCharge) }}</span>
             </div>
             <div class="receipt-row muted">
               <span>Processing fee</span>
@@ -169,9 +213,7 @@
             </ion-button>
           </div>
 
-          <p class="disclaimer">
-            This is a demonstration checkout. No real payment is processed.
-          </p>
+          
         </template>
 
         <template v-else-if="payStep === 'redirecting'">
@@ -233,6 +275,14 @@
               <span>{{ priorityLabel }} priority task — "{{ form.name || 'Untitled' }}"</span>
               <span>{{ money(subtotal) }}</span>
             </div>
+            <div v-if="form.photo" class="receipt-row muted">
+              <span>Photo add-on</span>
+              <span>{{ money(photoFee) }}</span>
+            </div>
+            <div v-if="clickCharge > 0" class="receipt-row muted">
+              <span>Button clicks ({{ clickCount }}× ₱2)</span>
+              <span>{{ money(clickCharge) }}</span>
+            </div>
             <div class="receipt-row muted">
               <span>Processing fee</span>
               <span>{{ money(FEE) }}</span>
@@ -251,9 +301,7 @@
             Back
           </ion-button>
 
-          <p class="disclaimer">
-            This is a demonstration checkout. No real payment is processed.
-          </p>
+        
         </template>
 
         <template v-else-if="payStep === 'card'">
@@ -261,6 +309,14 @@
             <div class="receipt-row">
               <span>{{ priorityLabel }} priority task — "{{ form.name || 'Untitled' }}"</span>
               <span>{{ money(subtotal) }}</span>
+            </div>
+            <div v-if="form.photo" class="receipt-row muted">
+              <span>Photo add-on</span>
+              <span>{{ money(photoFee) }}</span>
+            </div>
+            <div v-if="clickCharge > 0" class="receipt-row muted">
+              <span>Button clicks ({{ clickCount }}× ₱2)</span>
+              <span>{{ money(clickCharge) }}</span>
             </div>
             <div class="receipt-row muted">
               <span>Processing fee</span>
@@ -274,16 +330,16 @@
 
           <ion-list inset>
             <ion-item>
-              <ion-input label="Name on card" label-placement="stacked"  v-model="cardForm.name" />
+              <ion-input label="Name on card" label-placement="stacked" v-model="cardForm.name" />
             </ion-item>
             <ion-item>
-              <ion-input label="Card number" label-placement="stacked"  inputmode="numeric" maxlength="19" v-model="cardForm.number" />
+              <ion-input label="Card number" label-placement="stacked" inputmode="numeric" maxlength="19" v-model="cardForm.number" />
             </ion-item>
             <ion-item>
-              <ion-input label="Expiry (MM/YY)" label-placement="stacked"  maxlength="5" v-model="cardForm.exp" />
+              <ion-input label="Expiry (MM/YY)" label-placement="stacked" maxlength="5" v-model="cardForm.exp" />
             </ion-item>
             <ion-item>
-              <ion-input label="CVC" label-placement="stacked"  inputmode="numeric" maxlength="4" v-model="cardForm.cvc" />
+              <ion-input label="CVC" label-placement="stacked" inputmode="numeric" maxlength="4" v-model="cardForm.cvc" />
             </ion-item>
           </ion-list>
 
@@ -300,8 +356,6 @@
           <ion-button expand="block" fill="clear" size="small" :disabled="processing" @click="payStep = 'method'">
             Back
           </ion-button>
-
-        
         </template>
       </ion-content>
     </ion-modal>
@@ -314,10 +368,11 @@ import {
   IonPage, IonHeader, IonToolbar, IonTitle, IonContent,
   IonList, IonItem, IonItemSliding, IonItemOptions, IonItemOption,
   IonLabel, IonCheckbox, IonButton, IonButtons, IonIcon, IonChip, IonFab, IonFabButton,
-  IonModal, IonInput, IonSegment, IonSegmentButton, IonSpinner,
+  IonModal, IonInput, IonSegment, IonSegmentButton, IonSpinner, IonThumbnail, IonImg,
   toastController,
 } from '@ionic/vue';
-import { add, trashOutline, checkmarkDoneOutline } from 'ionicons/icons';
+import { add, trashOutline, checkmarkDoneOutline, cameraOutline, imagesOutline } from 'ionicons/icons';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useTaskStore } from '@/stores/taskStore';
@@ -325,8 +380,15 @@ import { useTaskStore } from '@/stores/taskStore';
 const router = useRouter();
 const taskStore = useTaskStore();
 
-const { tasks, doneCount, pendingCount, totalCount } = storeToRefs(taskStore);
-const { addTask, toggleTask, removeTask, clearCompleted } = taskStore;
+const { tasks, doneCount, pendingCount, totalCount, clickCount, clickCharge } = storeToRefs(taskStore);
+const { addTask, toggleTask, removeTask, clearCompleted, registerClick, resetClicks } = taskStore;
+
+// +₱2 for every button clicked while adding a task (charged at checkout).
+function onFlowClick(e) {
+  if (e.target?.closest?.('ion-button, ion-fab-button, ion-segment-button, ion-back-button, ion-chip')) {
+    registerClick();
+  }
+}
 
 const filter = ref('all');
 const visibleTasks = computed(() => {
@@ -336,7 +398,7 @@ const visibleTasks = computed(() => {
 });
 
 function openTask(id) {
-  router.push(`/tabs/tasks/${id}`);
+  router.push(`/day8/tasks/${id}`);
 }
 
 const isAddOpen = ref(false);
@@ -344,26 +406,52 @@ const form = reactive({
   name: '',
   dueDate: '',
   priority: 'low',
+  photo: '',
 });
 
 function resetForm() {
   form.name = '';
   form.dueDate = '';
   form.priority = 'low';
+  form.photo = '';
+}
+
+const photoChooserOpen = ref(false);
+
+function openPhotoChooser() {
+  photoChooserOpen.value = true;
+}
+
+async function pickFrom(which) {
+  photoChooserOpen.value = false;
+  const source = which === 'camera' ? CameraSource.Camera : CameraSource.Photos;
+  try {
+    const photo = await Camera.getPhoto({
+      quality: 80,
+      allowEditing: false,
+      resultType: CameraResultType.Uri,
+      source,
+    });
+    form.photo = photo.webPath ?? '';
+  } catch (err) {
+    const toast = await toastController.create({
+      message: 'No photo was added.',
+      duration: 1400,
+      position: 'bottom',
+      cssClass: 'app-toast',
+    });
+    await toast.present();
+  }
 }
 
 function openAddModal() {
   resetForm();
+  resetClicks();
   isAddOpen.value = true;
 }
 
 function closeAddModal() {
   isAddOpen.value = false;
-}
-
-function cancelAddModal() {
-  isAddOpen.value = false;
-  router.push('/tabs/tasks');
 }
 
 function todayISO() {
@@ -379,12 +467,14 @@ function submitAddModal() {
     name: form.name,
     dueDate: form.dueDate || todayISO(),
     priority: form.priority,
+    photo: form.photo,
   });
   closeAddModal();
 }
 
 const PRICES = { low: 111, medium: 167, high: 279 };
 const FEE = 17;
+const PHOTO_FEE = 56; // ~$1 add-on when a photo is attached
 
 const isPayOpen = ref(false);
 const processing = ref(false);
@@ -425,7 +515,8 @@ const passwordValid = computed(
 const loginValid = computed(() => emailValid.value && passwordValid.value);
 
 const subtotal = computed(() => PRICES[form.priority] ?? PRICES.low);
-const total = computed(() => subtotal.value + FEE);
+const photoFee = computed(() => (form.photo ? PHOTO_FEE : 0));
+const total = computed(() => subtotal.value + photoFee.value + FEE + clickCharge.value);
 const priorityLabel = computed(
   () => form.priority.charAt(0).toUpperCase() + form.priority.slice(1)
 );
@@ -469,13 +560,15 @@ function closePay() {
 
 async function confirmPayment() {
   processing.value = true;
+  const paid = total.value; // capture before clicks reset
   await new Promise((resolve) => setTimeout(resolve, 1200));
   submitAddModal();
   processing.value = false;
   isPayOpen.value = false;
   resetPayment();
+  resetClicks();
   const toast = await toastController.create({
-    message: `Payment of ${money(total.value)} approved. Task added.`,
+    message: `Payment of ${money(paid)} approved. Task added.`,
     duration: 1800,
     position: 'bottom',
     cssClass: 'app-toast',
@@ -494,6 +587,12 @@ async function confirmPayment() {
 
 .stats ion-chip {
   cursor: pointer;
+}
+
+.thumb {
+  --size: 44px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .done {
@@ -524,6 +623,13 @@ async function confirmPayment() {
   font-weight: 600;
   color: var(--ion-color-medium);
   margin: 8px 4px;
+}
+
+.preview {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid #d5d0c1;
 }
 
 .receipt {
@@ -642,5 +748,32 @@ async function confirmPayment() {
   --border-radius: 999px;
   font-weight: 600;
   margin-top: 4px;
+}
+
+.chooser-title {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  text-align: center;
+  margin: 4px 0 14px;
+  color: var(--ion-text-color);
+}
+
+.chooser-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-ghost {
+  --background: #ffffff;
+  --background-hover: #f3f0e8;
+  --background-activated: #ece8db;
+  --color: #33322d;
+  --border-radius: 999px;
+  --border-width: 1.5px;
+  --border-style: solid;
+  --border-color: #d5d0c1;
+  font-weight: 600;
 }
 </style>

@@ -3,6 +3,11 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
+        <ion-tab-button tab="home" href="/">
+          <ion-icon aria-hidden="true" :icon="homeOutline" />
+          <ion-label>Home</ion-label>
+        </ion-tab-button>
+
         <ion-tab-button tab="tab1" href="/day6/tab1">
           <ion-icon aria-hidden="true" :icon="listOutline" />
           <ion-label>Tasks</ion-label>
@@ -24,5 +29,5 @@
 
 <script setup>
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { listOutline, checkmarkDoneOutline, settingsOutline } from 'ionicons/icons';
+import { homeOutline, listOutline, checkmarkDoneOutline, settingsOutline } from 'ionicons/icons';
 </script>

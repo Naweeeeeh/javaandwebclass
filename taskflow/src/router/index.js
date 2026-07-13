@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
+import HomePage from '@/views/HomePage.vue';
 import Day7TabsPage from '@/views/Day7/Task7/TabsPage.vue';
 import Day6TabsPage from '@/views/Day6/Task6/TabsPage.vue';
+import Day8TabsPage from '@/views/Day8/Task8/TabsPage.vue';
 
 const routes = [
   {
     path: '/',
-    redirect: '/tabs/tasks'
+    component: HomePage
   },
   {
     path: '/tabs/',
@@ -30,6 +32,32 @@ const routes = [
       {
         path: 'settings',
         component: () => import('@/views/Day7/Task7/SettingsPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/day8/',
+    component: Day8TabsPage,
+    children: [
+      {
+        path: '',
+        redirect: '/day8/tasks'
+      },
+      {
+        path: 'tasks',
+        component: () => import('@/views/Day8/Task8/TasksPage.vue')
+      },
+      {
+        path: 'tasks/:id',
+        component: () => import('@/views/Day8/Task8/TaskDetailPage.vue')
+      },
+      {
+        path: 'completed',
+        component: () => import('@/views/Day8/Task8/CompletedPage.vue')
+      },
+      {
+        path: 'settings',
+        component: () => import('@/views/Day8/Task8/SettingsPage.vue')
       }
     ]
   },

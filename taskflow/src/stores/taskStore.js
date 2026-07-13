@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 const PRIORITIES = ['low', 'medium', 'high']
 const MAX_NAME_LENGTH = 200
+const PER_CLICK = 2 // ₱ added to the running tab on every button click
 
 export const useTaskStore = defineStore('tasks', () => {
 
@@ -12,6 +13,11 @@ export const useTaskStore = defineStore('tasks', () => {
     { id: 3, name: 'Say hello world',         done: true,  dueDate: '06/29/2026', priority: 'low' },
   ])
   const nextId = ref(4)
+  
+  const clickCount = ref(0)
+  const clickCharge = computed(() => clickCount.value * PER_CLICK)
+  function registerClick() { clickCount.value++ }
+  function resetClicks() { clickCount.value = 0 }
 
   const totalCount   = computed(() => tasks.value.length)
   const doneCount    = computed(() => tasks.value.filter((t) => t.done).length)
@@ -30,7 +36,13 @@ export const useTaskStore = defineStore('tasks', () => {
       done: opts.done === true,
       dueDate: typeof opts.dueDate === 'string' ? opts.dueDate : '',
       priority,
+      photo: typeof opts.photo === 'string' ? opts.photo : '',
     })
+  }
+
+  function addPhotoToTask(id, path) {
+    const task = tasks.value.find((t) => t.id === Number(id))
+    if (task) task.photo = path ?? ''
   }
 
   function toggleTask(id) {
@@ -60,7 +72,12 @@ export const useTaskStore = defineStore('tasks', () => {
     pendingCount,
     doneTasks,
     getTaskById,
+    clickCount,
+    clickCharge,
+    registerClick,
+    resetClicks,
     addTask,
+    addPhotoToTask,
     toggleTask,
     removeTask,
     updateTask,

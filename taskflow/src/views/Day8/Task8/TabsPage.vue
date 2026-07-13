@@ -8,17 +8,17 @@
           <ion-label>Home</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="tasks" href="/tabs/tasks">
+        <ion-tab-button tab="tasks" href="/day8/tasks">
           <ion-icon aria-hidden="true" :icon="listOutline" />
           <ion-label>Tasks</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="completed" href="/tabs/completed">
+        <ion-tab-button tab="completed" href="/day8/completed">
           <ion-icon aria-hidden="true" :icon="checkmarkDoneOutline" />
           <ion-label>Completed</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button tab="settings" href="/tabs/settings">
+        <ion-tab-button tab="settings" href="/day8/settings">
           <ion-icon aria-hidden="true" :icon="settingsOutline" />
           <ion-label>Settings</ion-label>
         </ion-tab-button>
