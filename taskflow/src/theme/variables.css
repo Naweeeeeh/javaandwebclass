@@ -1,0 +1,119 @@
+/* =============================================================
+   TaskFlow theme — "Akademia paper" palette, ported from the
+   Week 1 Vue project (src/style.css) so the Ionic app matches.
+   Ionic themes through CSS variables:
+   https://ionicframework.com/docs/theming/css-variables
+   ============================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
+:root {
+  /* ── Fonts ── */
+  --ion-font-family: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+  /* ── Paper background + ink text ── */
+  --ion-background-color: #ece9e1;      /* warm off-white paper */
+  --ion-background-color-rgb: 236, 233, 225;
+  --ion-text-color: #33322d;            /* body ink */
+  --ion-text-color-rgb: 51, 50, 45;
+
+  /* Surfaces (cards / list items / toolbars) */
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+  --ion-toolbar-background: #ece9e1;
+  --ion-toolbar-color: #16150f;
+
+  /* Warm neutral steps (borders, dividers, secondary text) */
+  --ion-color-step-50:  #e6e3db;
+  --ion-color-step-100: #dfdcd2;
+  --ion-color-step-150: #d5d0c1;
+  --ion-color-step-200: #cbc6b6;
+  --ion-color-step-250: #b9b4a4;
+  --ion-color-step-300: #a7a292;
+  --ion-color-step-400: #8c887c;
+  --ion-color-step-500: #726e64;
+  --ion-color-step-600: #5a564d;
+  --ion-color-step-700: #423f37;
+  --ion-color-step-800: #2a2822;
+  --ion-color-step-900: #16150f;
+
+  /* ── Primary = Akademia ink black (black pill buttons) ── */
+  --ion-color-primary: #16150f;
+  --ion-color-primary-rgb: 22, 21, 15;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #131208;
+  --ion-color-primary-tint: #2f2d24;
+
+  /* ── Success (routing green) ── */
+  --ion-color-success: #2e9e5b;
+  --ion-color-success-rgb: 46, 158, 91;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #288b50;
+  --ion-color-success-tint: #43a86b;
+
+  /* ── Warning ── */
+  --ion-color-warning: #c4922a;
+  --ion-color-warning-rgb: 196, 146, 42;
+  --ion-color-warning-contrast: #16150f;
+  --ion-color-warning-contrast-rgb: 22, 21, 15;
+  --ion-color-warning-shade: #ac8025;
+  --ion-color-warning-tint: #ca9d3f;
+
+  /* ── Danger ── */
+  --ion-color-danger: #d64a3f;
+  --ion-color-danger-rgb: 214, 74, 63;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #bc4137;
+  --ion-color-danger-tint: #da5c52;
+
+  /* ── Medium (muted meta) ── */
+  --ion-color-medium: #8c887c;
+  --ion-color-medium-rgb: 140, 136, 124;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #7b776d;
+  --ion-color-medium-tint: #989389;
+
+  /* Rounded corners to match the paper cards */
+  --ion-border-radius: 12px;
+}
+
+/* Headings use the Space Grotesk display face, like the Vue project */
+ion-title,
+h1, h2, h3 {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+ion-title[size='large'],
+.ios ion-title.title-large {
+  font-weight: 700;
+}
+
+/* Faint paper grain on the scrollable content, like body::before in the Vue app */
+ion-content {
+  --background:
+    #ece9e1
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E")
+    repeat;
+}
+
+/* Inset lists read as soft paper cards */
+ion-list.list-inset,
+ion-list[inset] {
+  border-radius: var(--ion-border-radius);
+  box-shadow: 0 2px 8px rgba(22, 21, 15, 0.06);
+}
+
+/* Toolbars get a hairline base, echoing the masthead border */
+ion-toolbar {
+  --border-color: #d5d0c1;
+}
+
+/* Pill-shaped header buttons, like the Vue project's pill controls */
+ion-toolbar ion-button {
+  --border-radius: 999px;
+}

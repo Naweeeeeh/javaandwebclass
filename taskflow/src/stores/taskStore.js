@@ -1,0 +1,67 @@
+import { ref, computed } from 'vue'
+import { defineStore } from 'pinia'
+
+export const useTaskStore = defineStore('tasks', () => {
+
+  const tasks = ref([
+    { id: 1, name: 'Write Playwright tests', done: false, dueDate: '06/30/2026', priority: 'high' },
+    { id: 2, name: 'Add documentation',      done: false, dueDate: '07/01/2026', priority: 'medium' },
+    { id: 3, name: 'Say hello world',         done: true,  dueDate: '06/29/2026', priority: 'low' },
+  ])
+  const nextId = ref(4)
+
+  const totalCount   = computed(() => tasks.value.length)
+  const doneCount    = computed(() => tasks.value.filter((t) => t.done).length)
+  const pendingCount = computed(() => totalCount.value - doneCount.value)
+  const doneTasks    = computed(() => tasks.value.filter((t) => t.done))
+  const getTaskById  = (id) => tasks.value.find((t) => t.id === Number(id))
+
+  function addTask(input) {
+    const opts = typeof input === 'string' ? { name: input } : (input ?? {})
+    const trimmed = (opts.name ?? '').trim()
+    if (!trimmed) return
+    tasks.value.push({
+      id: nextId.value++,
+      name: trimmed,
+      done: opts.done ?? false,
+      dueDate: opts.dueDate ?? '',
+      priority: opts.priority ?? 'low',
+    })
+  }
+
+  function toggleTask(id) {
+    const task = tasks.value.find((t) => t.id === id)
+    if (task) task.done = !task.done
+  }
+
+  function removeTask(id) {
+    tasks.value = tasks.value.filter((t) => t.id !== id)
+  }
+
+  function updateTask({ id, name }) {
+    const task = tasks.value.find((t) => t.id === id)
+    const trimmed = (name ?? '').trim()
+    if (task && trimmed) task.name = trimmed
+  }
+
+  function clearCompleted() {
+    tasks.value = tasks.value.filter((t) => !t.done)
+  }
+
+  return {
+    tasks,
+    nextId,
+    totalCount,
+    doneCount,
+    pendingCount,
+    doneTasks,
+    getTaskById,
+    addTask,
+    toggleTask,
+    removeTask,
+    updateTask,
+    clearCompleted,
+  }
+}, {
+  persist: true,
+})
