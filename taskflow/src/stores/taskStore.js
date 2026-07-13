@@ -1,6 +1,9 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
+const PRIORITIES = ['low', 'medium', 'high']
+const MAX_NAME_LENGTH = 200
+
 export const useTaskStore = defineStore('tasks', () => {
 
   const tasks = ref([
@@ -18,14 +21,15 @@ export const useTaskStore = defineStore('tasks', () => {
 
   function addTask(input) {
     const opts = typeof input === 'string' ? { name: input } : (input ?? {})
-    const trimmed = (opts.name ?? '').trim()
+    const trimmed = (opts.name ?? '').trim().slice(0, MAX_NAME_LENGTH)
     if (!trimmed) return
+    const priority = PRIORITIES.includes(opts.priority) ? opts.priority : 'low'
     tasks.value.push({
       id: nextId.value++,
       name: trimmed,
-      done: opts.done ?? false,
-      dueDate: opts.dueDate ?? '',
-      priority: opts.priority ?? 'low',
+      done: opts.done === true,
+      dueDate: typeof opts.dueDate === 'string' ? opts.dueDate : '',
+      priority,
     })
   }
 
@@ -63,5 +67,18 @@ export const useTaskStore = defineStore('tasks', () => {
     clearCompleted,
   }
 }, {
-  persist: true,
+  persist: {
+    // Guard against tampered / malformed localStorage so the app can't be
+    // bricked by a bad persisted value.
+    afterHydrate: (ctx) => {
+      const store = ctx.store
+      if (!Array.isArray(store.tasks)) {
+        store.tasks = []
+      }
+      const maxId = store.tasks.reduce((m, t) => Math.max(m, Number(t?.id) || 0), 0)
+      if (!Number.isInteger(store.nextId) || store.nextId <= maxId) {
+        store.nextId = maxId + 1
+      }
+    },
+  },
 })

@@ -32,7 +32,7 @@
 
           <ion-item>
             <ion-label>ID</ion-label>
-            <ion-note slot="end">#{{ task.id }}</ion-note>
+            <ion-note slot="">{{ task.id }}</ion-note>
           </ion-item>
 
           <ion-item>
