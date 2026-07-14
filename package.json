@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/preferences": "^8.0.1",
     "axios": "^1.18.1",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",

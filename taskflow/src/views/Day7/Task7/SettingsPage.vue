@@ -58,7 +58,7 @@ import { useTaskStore } from '@/stores/taskStore';
 
 const taskStore = useTaskStore();
 const { totalCount, doneCount, pendingCount, tasks } = storeToRefs(taskStore);
-const { clearCompleted } = taskStore;
+const { clearCompleted, clearAll } = taskStore;
 
 async function confirmReset() {
   const alert = await alertController.create({
@@ -69,7 +69,7 @@ async function confirmReset() {
       {
         text: 'Delete all',
         role: 'destructive',
-        handler: () => { tasks.value = []; },
+        handler: () => { clearAll(); },
       },
     ],
   });

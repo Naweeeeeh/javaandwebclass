@@ -37,6 +37,7 @@ const days = [
   { day: 6, route: '/day6/tab1' },
   { day: 7, route: '/tabs/tasks' },
   { day: 8, route: '/day8/tasks' },
+  { day: 9, route: '/day9/tasks' },
 ];
 
 function open(route) {

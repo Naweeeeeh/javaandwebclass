@@ -15,11 +15,11 @@
 
       <ion-list inset>
         <ion-item-divider>Overview</ion-item-divider>
-        <ion-item>
+        <ion-item @click="clickTotal">
           <ion-label>Total tasks</ion-label>
           <ion-note slot="end">{{ totalCount }}</ion-note>
         </ion-item>
-        <ion-item>
+        <ion-item @click="clickConfirm">
           <ion-label>Completed</ion-label>
           <ion-note slot="end">{{ doneCount }}</ion-note>
         </ion-item>
@@ -41,7 +41,7 @@
         </ion-item>
       </ion-list>
 
-      <p class="about">TaskFlow · Day 8 — Photo-enabled tasks</p>
+      <p class="about">TaskFlow · Day 9 — Photo-enabled tasks</p>
     </ion-content>
   </ion-page>
 </template>
@@ -55,6 +55,7 @@ import {
 import { trashBinOutline, refreshOutline } from 'ionicons/icons';
 import { storeToRefs } from 'pinia';
 import { useTaskStore } from '@/stores/taskStore';
+import router from '@/router';
 
 const taskStore = useTaskStore();
 const { totalCount, doneCount, pendingCount, tasks } = storeToRefs(taskStore);
@@ -74,6 +75,15 @@ async function confirmReset() {
     ],
   });
   await alert.present();
+}
+
+
+function clickTotal(){
+  router.push('/day9/tasks')
+}
+
+function clickConfirm(){
+  router.push('/day9/completed')
 }
 </script>
 

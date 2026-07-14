@@ -4,7 +4,7 @@
       <ion-toolbar>
         <ion-title>Tasks</ion-title>
         <ion-buttons slot="end">
-          <ion-button :disabled="doneCount === 0" @click="clearCompleted">
+          <ion-button @click="onClearDone">
             Clear done
           </ion-button>
         </ion-buttons>
@@ -32,7 +32,7 @@
 
       <div v-if="visibleTasks.length === 0" class="empty">
         <ion-icon :icon="checkmarkDoneOutline" />
-        <p v-if="tasks.length === 0">No tasks yet — tap + to add your first one.</p>
+        <p v-if="tasks.length === 0">Empty Tasklist</p>
         <p v-else>No {{ filter }} tasks.</p>
       </div>
 
@@ -386,7 +386,20 @@ const taskStore = useTaskStore();
 const { tasks, doneCount, pendingCount, totalCount, clickCount, clickCharge } = storeToRefs(taskStore);
 const { addTask, toggleTask, removeTask, clearCompleted, registerClick, resetClicks } = taskStore;
 
-// +₱2 for every button clicked while adding a task (charged at checkout).
+async function onClearDone() {
+  if (doneCount.value === 0) {
+    const t = await toastController.create({
+      message: 'No done task yet.',
+      duration: 1500,
+      position: 'bottom',
+      cssClass: 'app-toast',
+    });
+    await t.present();
+    return;
+  }
+  clearCompleted();
+}
+
 function onFlowClick(e) {
   if (e.target?.closest?.('ion-button, ion-fab-button, ion-segment-button, ion-back-button, ion-chip')) {
     registerClick();
@@ -401,7 +414,7 @@ const visibleTasks = computed(() => {
 });
 
 function openTask(id) {
-  router.push(`/day8/tasks/${id}`);
+  router.push(`/day9/tasks/${id}`);
 }
 
 const isAddOpen = ref(false);
@@ -477,7 +490,7 @@ function submitAddModal() {
 
 const PRICES = { low: 111, medium: 167, high: 279 };
 const FEE = 17;
-const PHOTO_FEE = 56; // ~$1 add-on when a photo is attached
+const PHOTO_FEE = 56;
 
 const isPayOpen = ref(false);
 const processing = ref(false);
@@ -543,19 +556,16 @@ const adOpen = ref(false);
 function goToCheckout() {
   if (!form.name.trim()) return;
   isAddOpen.value = false;
-  // Play a (simulated) ad break before the checkout opens.
   adOpen.value = true;
 }
 
 function onAdDone() {
-  // Ad finished/skipped → proceed to checkout.
   payStep.value = 'method';
   setTimeout(() => { isPayOpen.value = true; }, 250);
 }
 
 function choosePaypal() {
   payStep.value = 'redirecting';
-  // Simulated hand-off to PayPal before showing the login screen.
   setTimeout(() => {
     if (isPayOpen.value && payStep.value === 'redirecting') {
       payStep.value = 'login';
@@ -571,7 +581,7 @@ function closePay() {
 
 async function confirmPayment() {
   processing.value = true;
-  const paid = total.value; // capture before clicks reset
+  const paid = total.value;
   await new Promise((resolve) => setTimeout(resolve, 1200));
   submitAddModal();
   processing.value = false;

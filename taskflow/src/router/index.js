@@ -3,6 +3,7 @@ import HomePage from '@/views/HomePage.vue';
 import Day7TabsPage from '@/views/Day7/Task7/TabsPage.vue';
 import Day6TabsPage from '@/views/Day6/Task6/TabsPage.vue';
 import Day8TabsPage from '@/views/Day8/Task8/TabsPage.vue';
+import Day9TabsPage from '@/views/Day9/Task9/TabsPage.vue';
 
 const routes = [
   {
@@ -58,6 +59,32 @@ const routes = [
       {
         path: 'settings',
         component: () => import('@/views/Day8/Task8/SettingsPage.vue')
+      }
+    ]
+  },
+  {
+    path: '/day9/',
+    component: Day9TabsPage,
+    children: [
+      {
+        path: '',
+        redirect: '/day9/tasks'
+      },
+      {
+        path: 'tasks',
+        component: () => import('@/views/Day9/Task9/TasksPage.vue')
+      },
+      {
+        path: 'tasks/:id',
+        component: () => import('@/views/Day9/Task9/TaskDetailPage.vue')
+      },
+      {
+        path: 'completed',
+        component: () => import('@/views/Day9/Task9/CompletedPage.vue')
+      },
+      {
+        path: 'settings',
+        component: () => import('@/views/Day9/Task9/SettingsPage.vue')
       }
     ]
   },

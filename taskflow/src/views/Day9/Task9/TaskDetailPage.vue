@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-back-button default-href="/day8/tasks" />
+          <ion-back-button default-href="/day9/tasks" />
         </ion-buttons>
         <ion-title>Task Detail</ion-title>
       </ion-toolbar>
@@ -190,12 +190,12 @@ function onPhotoPaid() {
 
 function toggleAndReturn() {
   if (task.value) toggleTask(task.value.id);
-  router.push('/day8/tasks');
+  router.push('/day9/tasks');
 }
 
 function onDelete() {
   if (task.value) removeTask(task.value.id);
-  router.push('/day8/tasks');
+  router.push('/day9/tasks');
 }
 </script>
 
