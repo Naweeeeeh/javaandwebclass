@@ -1,16 +1,22 @@
 {
   "name": "taskflow",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "TaskFlow — Ionic + Vue + Pinia training app (Day 6 tabs, Day 7 tabs + detail)",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "test:e2e": "cypress run",
     "test:unit": "vitest",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sync": "npm run build && cap sync",
+    "android": "npm run build && cap sync android && cap run android",
+    "android:open": "npm run build && cap sync android && cap open android",
+    "ios": "npm run build && cap sync ios && cap run ios",
+    "ios:open": "npm run build && cap sync ios && cap open ios"
   },
   "dependencies": {
     "@capacitor/android": "^8.4.1",

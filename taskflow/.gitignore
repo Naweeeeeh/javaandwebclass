@@ -31,3 +31,9 @@ cypress/screenshots/
 # Capacitor
 /android
 /ios
+
+# Signing — never commit keystores or their passwords
+*.jks
+*.keystore
+key.properties
+android/taskflowjks/
